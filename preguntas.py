@@ -96,7 +96,7 @@ def pregunta_06():
     orden=tbl1.sort_values("_c4")
     unicos= orden["_c4"].unique()
     
-    return unicos
+    return unicos.tolist()
 
 
 def pregunta_07():
