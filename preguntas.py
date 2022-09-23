@@ -146,9 +146,8 @@ def pregunta_09():
     38   38   E    1  1999-09-28  1999
     39   39   E    5  1998-01-26  1998
     """
-    tbl0["_c3"]=pd.to_datetime(tbl0["_c3"], format="%Y-%m-%d")
-    tbl0["year"]=tbl0["_c3"].dt.year
-    
+    date_col = pd.DatetimeIndex(tbl0["_c3"])
+    tbl0["year"] = date_col.year
     return tbl0
 
 
