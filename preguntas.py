@@ -146,16 +146,16 @@ def pregunta_09():
     38   38   E    1  1999-09-28  1999
     39   39   E    5  1998-01-26  1998
     """
-    date_col = pd.DatetimeIndex(tbl0["_c3"])
-    tbl0["year"] = date_col.year
-    return tbl0
+    tabla9 = tbl0
+    tabla9["year"] = tabla9["_c3"].str.split("-")
+    tabla9["year"] = tabla9["_c3"].map(lambda x: x.split("-")[0])
+    return tabla9
 
 
 def pregunta_10():
     """
     Construya una tabla que contenga _c1 y una lista separada por ':' de los valores de
     la columna _c2 para el archivo `tbl0.tsv`.
-
     Rta/
                                    _c1
       _c0
@@ -165,14 +165,18 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    tabla10 = tbl0
+    tabla10 = tabla10.sort_values(["_c2"])
+    punto10 = tabla10.groupby("_c1")["_c2"].apply(lambda x:':'.join(x.astype(str))).reset_index(drop=False)
+    punto10.set_index('_c1', inplace=True)
+    
+    return punto10
 
 
 def pregunta_11():
     """
     Construya una tabla que contenga _c0 y una lista separada por ',' de los valores de
     la columna _c4 del archivo `tbl1.tsv`.
-
     Rta/
         _c0      _c4
     0     0    b,f,g
@@ -184,14 +188,19 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    tabla11 = tbl1
+    tabla11 = tabla11.sort_values(["_c4"])
+    punto11 = tabla11.groupby("_c0")["_c4"].apply(lambda x:','.join(x.astype(str)))
+    punto11=pd.DataFrame(list(punto11.items()),
+                   columns=['_c0', '_c4'])
+   
+    return  punto11
 
 
 def pregunta_12():
     """
     Construya una tabla que contenga _c0 y una lista separada por ',' de los valores de
     la columna _c5a y _c5b (unidos por ':') de la tabla `tbl2.tsv`.
-
     Rta/
         _c0                                  _c5
     0     0        bbb:0,ddd:9,ggg:8,hhh:2,jjj:3
@@ -202,14 +211,18 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    tabla12 = tbl2
+    tabla12["_c5"] = tabla12["_c5a"].map(str) + ":" + tabla12["_c5b"].map(str)
+    tabla12 = tabla12.sort_values(["_c5"])
+    punto12 = tabla12.groupby(["_c0"], as_index = False).agg({"_c5":",".join})
+    
+    return punto12
 
 
 def pregunta_13():
     """
     Si la columna _c0 es la clave en los archivos `tbl0.tsv` y `tbl2.tsv`, compute la
     suma de tbl2._c5b por cada valor en tbl0._c1.
-
     Rta/
     _c1
     A    146
@@ -219,4 +232,7 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    tabla = pd.merge(tbl0,tbl2, on = "_c0" )
+    punto13 = tabla.groupby("_c1")["_c5b"].sum()
+    
+    return punto13
